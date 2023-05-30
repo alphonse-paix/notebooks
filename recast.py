@@ -176,5 +176,16 @@ class Model:
     
 
     def next(self, inter_times, num_preds=1):
+        inter_time = inter_times[-1]
+        preds = []
         for _ in range(num_preds):
-            next_context = self.get_context(inter_times)
+            last = inter_time
+            tau = tf.expand_dims(last, axis=-1)
+            log_tau = tf.math.log(
+                tf.clip_by_value(tau, 1e-8, tf.reduce_max(tau)))
+            input = tf.concat([tau, log_tau], axis=-1)
+            context = self.encoder(input)
+            dist = self.get_inter_times_distribution(context)
+            inter_time = dist.sample(1)
+            preds.append(inter_time)
+        return inter_times[-1] + np.cumsum(preds)
