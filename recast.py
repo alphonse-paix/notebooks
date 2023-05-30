@@ -91,6 +91,7 @@ class Model:
         self.decoder = keras.layers.Dense(2, activation="softplus")
         self.optimizer = keras.optimizers.Adam(learning_rate=0.01)
         self.dist = dist
+        self.dist_params = {"b": [], "k": []}
 
 
     def get_context(self, inter_times):
@@ -107,6 +108,8 @@ class Model:
             params = self.decoder(context)
             b = params[..., 0]
             k = params[..., 1]
+            self.dist_params["b"].append(b)
+            self.dist_params["k"].append(k)
             return self.dist(b, k)
         else:
             assert False and "Distribution not supported"
