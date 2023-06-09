@@ -89,7 +89,7 @@ class Model:
         self.context_size = context_size
         self.encoder = keras.layers.GRU(context_size, return_sequences=True)
         self.decoder = keras.layers.Dense(2, activation="softplus")
-        self.optimizer = keras.optimizers.Adam(learning_rate=0.01)
+        self.optimizer = keras.optimizers.Adam(learning_rate=1e-3)
         self.dist = dist
         self.dist_params = {"b": [], "k": []}
 
